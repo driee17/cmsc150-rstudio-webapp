@@ -1,6 +1,59 @@
 # Adrian Cueto (CMSC 150 Exer 10)
 # This serves as the server of the RShiny App
 
+function(input, output) {
+  library(shinycssloaders)
+  
+  # Convert input strings into vectors
+  reactive_input_data <- reactive({
+    req(input$x_values, input$y_values)  # ensures both inputs are present
+    
+    x <- as.numeric(unlist(strsplit(input$x_values, ",")))
+    y <- as.numeric(unlist(strsplit(input$y_values, ",")))
+    
+    validate(
+      need(length(x) >= 3 && length(y) >= 3, "Enter at least 3 values for x and y."),
+      need(length(x) == length(y), "x and y must have the same length.")
+    )
+    
+    list(x_values = x, y_values = y)
+  })
+  
+  # Text output (input summary)
+  output$qsi_input <- renderUI({
+    req(input$calculate)  # waits for button
+    data <- reactive_input_data()
+    
+    HTML(paste0("<pre style='background:#f8f9fa;padding:10px;border-radius:8px;'><code>", 
+                "x = ", paste(data$x_values, collapse = ", "), "<br>",
+                "y = ", paste(data$y_values, collapse = ", "), "<br>",
+                "Approximate x = ", input$est_val,
+                "</code></pre>"))
+  })
+  
+  # Computation result
+  qsi_computation <- reactive({
+    req(input$calculate)
+    data <- reactive_input_data()
+    poly.qsi(data, input$est_val)
+  })
+  
+  output$qsi_funct <- renderUI({
+    req(qsi_computation())
+    HTML(paste0("<pre style='background:#e9f7ef;padding:10px;border-left:5px solid #28a745;border-radius:8px;'><code>",
+                paste(qsi_computation()$qsi.fxns, collapse = "<br>"),
+                "</code></pre>"))
+  })
+  
+  output$qsi_result <- renderUI({
+    req(qsi_computation())
+    HTML(paste0("<div style='font-size:1.5em; padding:10px; background:#fff3cd; border-left:5px solid #ffc107; border-radius:8px;'>",
+                "<strong>Estimated Y:</strong> ", qsi_computation()$y,
+                "</div>"))
+  })
+}
+
+
 library(shiny) # this imports the package R Shiny
 library(shinyMatrix) # this imports the package for the matrixInput() function to be used in the Simplex Method
 # imports the QSI and Simplex Method program to be integrated in UI
