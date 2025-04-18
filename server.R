@@ -1,8 +1,15 @@
 # Adrian Cueto (CMSC 150 Exer 10)
 # This serves as the server of the RShiny App
 
+library(shiny) # this imports the package R Shiny
+library(shinyMatrix) # this imports the package for the matrixInput() function to be used in the Simplex Method
+library(shinycssloaders)
+# imports the QSI and Simplex Method program to be integrated in UI
+source("www/CuetoEx08.R")
+source("www/CuetoEx09.R")
+
+# Server
 function(input, output) {
-  library(shinycssloaders)
   
   # Convert input strings into vectors
   reactive_input_data <- reactive({
@@ -53,14 +60,6 @@ function(input, output) {
   })
 }
 
-
-library(shiny) # this imports the package R Shiny
-library(shinyMatrix) # this imports the package for the matrixInput() function to be used in the Simplex Method
-# imports the QSI and Simplex Method program to be integrated in UI
-source("www/CuetoEx08.R")
-source("www/CuetoEx09.R")
-
-# Server
 function(input, output) {
   # QSI Calculator
   observeEvent(input$calculate, { # this runs the code once the user clicks the "Calculate" button

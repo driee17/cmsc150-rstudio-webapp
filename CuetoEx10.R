@@ -6,5 +6,6 @@
 # Option 1: Click the "Run App" button in the upper right corner of this window
 
 # Option 2: Or run this code in the console instead 
+install.packages(c("shiny", "shinyMatrix", "bslib", "shinycssloaders"))
 library(shiny)
 runApp()
